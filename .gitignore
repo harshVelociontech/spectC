@@ -1,0 +1,39 @@
+# Ignore node_modules if you use Node.js
+node_modules/
+
+# Ignore Python virtual environments
+venv/
+.env/
+
+# Ignore local Supabase configuration files (if not needed in version control)
+supabase/.env.local
+supabase/.env
+
+# Ignore temporary files and build artifacts
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Ignore IDE-specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore sensitive files (e.g., database credentials)
+*.credentials
+*.json
+
+# Ignore local database dumps or backups
+*.sql.bak
+backup.sql
+
+# Ignore temp folder (already present in your structure)
+.temp/
+
+# Ignore branches folder if it's

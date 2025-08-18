@@ -16,6 +16,10 @@ ALTER TABLE project_members ENABLE ROW LEVEL SECURITY;
 
 -- Policies for project_members
 -- SELECT: admin, project creator, or member
+-- Policies for project_members
+-- SELECT: admin, project creator, or member
+-- Policies for project_members
+-- SELECT: admin, project creator, or member
 CREATE POLICY "Allow select for admin creator or member" ON project_members FOR SELECT USING (
   is_admin() OR
   (SELECT created_by FROM projects WHERE id = project_members.project_id) = auth.uid() OR
@@ -25,7 +29,7 @@ CREATE POLICY "Allow select for admin creator or member" ON project_members FOR 
 -- INSERT: admin or project creator
 CREATE POLICY "Allow insert for admin or creator" ON project_members FOR INSERT WITH CHECK (
   is_admin() OR
-  (SELECT created_by FROM projects WHERE id = new.project_id) = auth.uid()
+  EXISTS (SELECT 1 FROM projects WHERE id = NEW.project_id AND created_by = auth.uid())
 );
 
 -- UPDATE: admin or project creator
