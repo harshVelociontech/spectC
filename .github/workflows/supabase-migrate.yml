@@ -7,7 +7,7 @@ on:
     branches:
       - dev        # Dev branch
       - staging    # Staging branch
-      - main       # Production (main) branch
+      - main       # Production (main) 
 
 jobs:
   migrate-db:
