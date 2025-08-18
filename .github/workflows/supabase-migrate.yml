@@ -7,7 +7,7 @@ on:
     branches:
       - dev        # Dev branch
       - staging    # Staging branch
-      - main       # Production (main) 
+      - main       # Production (main) branch
 
 jobs:
   migrate-db:
@@ -32,6 +32,8 @@ jobs:
 
       - name: Link Supabase Project
         run: supabase link --project-ref ${{ env.PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
       - name: Apply migrations
         run: supabase migration up --linked
