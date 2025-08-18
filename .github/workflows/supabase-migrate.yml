@@ -34,11 +34,12 @@ jobs:
         run: supabase link --project-ref ${{ env.PROJECT_REF }}
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}          
 
       - name: Apply migrations
         run: supabase migration up --linked
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       # (Optional) Notify if migration fails
       # You can add Slack/email notifications here
