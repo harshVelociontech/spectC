@@ -1,0 +1,43 @@
+# .github/workflows/supabase-migrate.yml
+
+name: Supabase Schema Migration
+
+on:
+  push:
+    branches:
+      - dev        # Dev branch
+      - main       # Production (main) branch
+
+jobs:
+  migrate-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Select Project Ref
+        id: select-ref
+        run: |
+          if [ "${GITHUB_REF##*/}" = "dev" ]; then
+            echo "PROJECT_REF=${{ secrets.PROJECT_REF_DEV }}" >> $GITHUB_ENV
+          elif [ "${GITHUB_REF##*/}" = "main" ]; then
+            echo "PROJECT_REF=${{ secrets.PROJECT_REF_PRODUCTION }}" >> $GITHUB_ENV
+          fi
+
+      - name: Link Supabase Project
+        run: supabase link --project-ref ${{ env.PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}           
+
+      - name: Apply migrations
+        run: supabase migration up --linked
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      # (Optional) Notify if migration fails
+      # You can add Slack/email notifications here

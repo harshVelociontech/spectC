@@ -1,5 +1,3 @@
--- migrations/0014_create_user_settings_table.sql
-
 -- Create user_settings table
 CREATE TABLE user_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -19,23 +17,34 @@ CREATE TABLE user_settings (
 -- Enable RLS
 ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
 
--- Policies for user_settings
 -- SELECT: own or admin
-CREATE POLICY "Allow select own or admin" ON user_settings FOR SELECT USING (
+CREATE POLICY "Allow select own or admin"
+ON user_settings
+FOR SELECT
+USING (
   user_id = auth.uid() OR is_admin()
 );
 
 -- INSERT: own or admin
-CREATE POLICY "Allow insert own or admin" ON user_settings FOR INSERT WITH CHECK (
-  new.user_id = auth.uid() OR is_admin()
+CREATE POLICY "Allow insert own or admin"
+ON user_settings
+FOR INSERT
+WITH CHECK (
+  user_id = auth.uid() OR is_admin()
 );
 
 -- UPDATE: own or admin
-CREATE POLICY "Allow update own or admin" ON user_settings FOR UPDATE USING (
+CREATE POLICY "Allow update own or admin"
+ON user_settings
+FOR UPDATE
+USING (
   user_id = auth.uid() OR is_admin()
 );
 
 -- DELETE: own or admin
-CREATE POLICY "Allow delete own or admin" ON user_settings FOR DELETE USING (
+CREATE POLICY "Allow delete own or admin"
+ON user_settings
+FOR DELETE
+USING (
   user_id = auth.uid() OR is_admin()
 );

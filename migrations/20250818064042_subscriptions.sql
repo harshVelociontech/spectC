@@ -4,7 +4,7 @@
 CREATE TABLE subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id),
-  plan_id UUID NOT NULL REFERENCES payment_plans(id),
+  -- plan_id UUID NOT NULL REFERENCES payment_plans(id),
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   auto_renew BOOLEAN DEFAULT TRUE,

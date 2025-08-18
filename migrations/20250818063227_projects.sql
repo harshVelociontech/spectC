@@ -25,10 +25,11 @@ ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 
 -- Policies for projects
 -- SELECT: admin, creator, or member
-CREATE POLICY "Allow select for admin creator or member" ON projects FOR SELECT USING (
+-- Policies for projects
+-- SELECT: admin or creator (temporary, without project_members dependency)
+CREATE POLICY "Allow select for admin or creator" ON projects FOR SELECT USING (
   is_admin() OR
-  created_by = auth.uid() OR
-  EXISTS (SELECT 1 FROM project_members WHERE project_id = projects.id AND user_id = auth.uid())
+  created_by = auth.uid()
 );
 
 -- INSERT: authenticated users (any can create projects)

@@ -1,7 +1,6 @@
+-- Create enum types
 CREATE TYPE task_status_enum AS ENUM ('Backlog', 'In Progress', 'Testing', 'Review', 'Completed');
 CREATE TYPE task_priority_enum AS ENUM ('Low', 'Medium', 'High', 'Critical');
-
--- migrations/0008_create_tasks_table.sql
 
 -- Create tasks table
 CREATE TABLE tasks (
@@ -25,30 +24,53 @@ CREATE TABLE tasks (
 -- Enable RLS
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
--- Policies for tasks
 -- SELECT: admin, project creator, or project member
-CREATE POLICY "Allow select for admin creator or member" ON tasks FOR SELECT USING (
+CREATE POLICY "Allow select for admin creator or member"
+ON tasks
+FOR SELECT
+USING (
   is_admin() OR
-  (SELECT created_by FROM projects WHERE id = tasks.project_id) = auth.uid() OR
-  EXISTS (SELECT 1 FROM project_members WHERE project_id = tasks.project_id AND user_id = auth.uid())
+  auth.uid() = (SELECT created_by FROM projects WHERE id = project_id) OR
+  EXISTS (
+    SELECT 1 FROM project_members pm
+    WHERE pm.project_id = tasks.project_id
+      AND pm.user_id = auth.uid()
+  )
 );
 
 -- INSERT: admin, project creator, or project member
-CREATE POLICY "Allow insert for admin creator or member" ON tasks FOR INSERT WITH CHECK (
+CREATE POLICY "Allow insert for admin creator or member"
+ON tasks
+FOR INSERT
+WITH CHECK (
   is_admin() OR
-  (SELECT created_by FROM projects WHERE id = new.project_id) = auth.uid() OR
-  EXISTS (SELECT 1 FROM project_members WHERE project_id = new.project_id AND user_id = auth.uid())
+  auth.uid() = (SELECT created_by FROM projects WHERE id = project_id) OR
+  EXISTS (
+    SELECT 1 FROM project_members pm
+    WHERE pm.project_id = project_id
+      AND pm.user_id = auth.uid()
+  )
 );
 
 -- UPDATE: admin, task creator, or assignee
-CREATE POLICY "Allow update for admin creator or assignee" ON tasks FOR UPDATE USING (
+CREATE POLICY "Allow update for admin creator or assignee"
+ON tasks
+FOR UPDATE
+USING (
   is_admin() OR
   created_by = auth.uid() OR
-  EXISTS (SELECT 1 FROM task_assignees WHERE task_id = tasks.id AND user_id = auth.uid())
+  EXISTS (
+    SELECT 1 FROM task_assignees ta
+    WHERE ta.task_id = tasks.id
+      AND ta.user_id = auth.uid()
+  )
 );
 
 -- DELETE: admin or project creator
-CREATE POLICY "Allow delete for admin or creator" ON tasks FOR DELETE USING (
+CREATE POLICY "Allow delete for admin or creator"
+ON tasks
+FOR DELETE
+USING (
   is_admin() OR
-  (SELECT created_by FROM projects WHERE id = tasks.project_id) = auth.uid()
+  auth.uid() = (SELECT created_by FROM projects WHERE id = project_id)
 );
