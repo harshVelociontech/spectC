@@ -22,7 +22,7 @@ jobs:
       - name: Set Project Ref and DB Password
         run: |
           echo "PROJECT_REF=${{ secrets.PROJECT_REF_DEV }}" >> $GITHUB_ENV
-          echo "SUPABASE_DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "SUPABASE_DB_PASSWORD=${{ secrets.SUPABASE_DB_PASSWORD_DEV }}" >> $GITHUB_ENV
 
       - name: Link Supabase Project
         run: supabase link --project-ref ${{ env.PROJECT_REF }}
